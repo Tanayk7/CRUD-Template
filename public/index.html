@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1> 
+        This is the home route.
+    </h1>
+    
+    <form id="createVehicle"> 
+        <input name="brandname" type="text" placeholder="Brand Name" required/> 
+        <input name="year" type="text" placeholder="Brand Year" required/> 
+        <input name="color" type="text" placeholder="Brand Color" required/> 
+        <input name="max_speed" type="text" placeholder="Brand Maxspeed" required/> 
+        <input name="category" type="text" placeholder="Brand Category" required/> 
+        <button type="submit">Add Vehicle</button>
+    </form>
+
+    <button class="delete-button">delete</button>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Brand Name</th>
+                <th>Brand Year</th>
+                <th>Brand Color</th>
+                <th>Brand Maxspeed </th>
+                <th>Brand Category </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+
+        </tbody>
+        </tbody>
+    </table>
+
+
+    <!-- GET ITEMS ONCE DOCUMENT HAS LOADED  -->
+    <script>
+        document.addEventListener("DOMContentLoaded",async (e) => {
+            let response = await fetch("http://localhost:9000/getItems",{
+                method: "GET",
+            });
+            console.log(response);
+            let items = await response.json();
+            console.log(items);
+            let html = "";
+            items.forEach(item => {
+                html += `
+                            <tr>
+                                <td><input type='checkbox' data-delete='${item._id}' class='record-selector'></td>
+                                <td>${item.brandname}</td>
+                                <td>${item.year}</td>
+                                <td>${item.color}</td>
+                                <td>${item.max_speed}</td>
+                                <td>${item.category}</td>
+                                <td><button data-edit='${item._id}' class='edit-button'>edit</button></td>
+                            </tr>
+                        `;
+            });
+            let tbody = document.querySelector('.table-body');
+            tbody.innerHTML = html;
+        })
+    </script>
+    <!-- CREATE VEHICLES -->
+    <script>
+        let createForm = document.getElementById("createVehicle");
+        createForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let form = e.target;
+            console.log("form is: ",form);
+            let data = {
+                brandname: form.elements["brandname"].value,
+                category:form.elements["category"].value,
+                color: form.elements["color"].value,
+                year: form.elements["year"].value,
+                max_speed: form.elements["max_speed"].value,
+            }
+            fetch("http://localhost:9000/createItem",{
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type":"application/json",
+                }
+            }).then(res=>{
+                return res.text();
+            }).then(text => {
+                console.log(text);
+                location.reload();
+            }).catch(err=>{
+                console.log(err);
+            });
+        })
+
+    </script>
+     <!-- DELETE VEHICLES -->
+     <script>
+        document.addEventListener("DOMContentLoaded", (e) => {
+            let deleteBtn = document.querySelector('.delete-button');
+            deleteBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                let recordSelectors = document.querySelectorAll(".record-selector");
+                console.log("delete was clicked");
+    
+                let delete_list = [];
+                recordSelectors.forEach(selector => {
+                    if(selector.checked){
+                        delete_list.push(selector.getAttribute('data-delete'));
+                    }
+                });
+    
+                console.log("Delete list is: ",delete_list);
+    
+                let data = {
+                    delete_list: delete_list,
+                }
+    
+                fetch("http://localhost:9000/deleteItem",{
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        "Content-Type":"application/json",
+                    }
+                }).then(res=>{
+                    return res.text();
+                }).then(text => {
+                    console.log(text);
+                    location.reload();
+                }).catch(err=>{
+                    console.log(err);
+                });
+            });
+        });
+        
+    </script>
+     <!-- UPDATE VEHICLES -->
+     <script>
+       
+    </script>
+</body>
+</html>
