@@ -56,6 +56,7 @@ app.post("/deleteItem", async (req, res) => {
             $in: objectIDS,
         },
     });
+    console.log("Items deleted successfully !");
     res.send({success:true});
 });
 
