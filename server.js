@@ -20,8 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "./public")));
 
-
-
 // ROUTES
 app.get("/",(req,res) => {
     res.send("index.html");
@@ -29,8 +27,6 @@ app.get("/",(req,res) => {
 
 app.post("/createItem", async (req,res) => {
     console.log("Items created: ");
-    
-
     let vehicle_data = {
         brandname: req.body.brandname,
         year: req.body.year,
@@ -38,10 +34,7 @@ app.post("/createItem", async (req,res) => {
         max_speed: req.body.max_speed,
         category: req.body.category,
     };
-
     console.log("Vehicle data is: ",vehicle_data);
-
-
     let vehicle = new Vehicles(vehicle_data);
     let result = await vehicle.save();
     console.log("Vehicle saved successfully");
@@ -60,8 +53,19 @@ app.post("/deleteItem", async (req, res) => {
     res.send({success:true});
 });
 
-app.post("updateItem",(req,res) => {
-    console.log("Items updated:");
+app.post("/updateItem",async (req,res) => {
+    let id = req.body.id;
+    let vehicle_data = {
+        brandname: req.body.brandname,
+        year: req.body.year,
+        color: req.body.color,
+        max_speed: req.body.max_speed,
+        category: req.body.category,
+    };
+    console.log("Data from front end: ",vehicle_data);
+    let result = await Vehicles.findByIdAndUpdate({_id:id},vehicle_data);
+    console.log(result);
+    res.send({success: true});
 });
 
 app.get("/getItems",async (req,res) => {

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>Document</title>
 </head>
 <body>
@@ -10,34 +12,78 @@
         This is the home route.
     </h1>
     
-    <form id="createVehicle"> 
-        <input name="brandname" type="text" placeholder="Brand Name" required/> 
-        <input name="year" type="text" placeholder="Brand Year" required/> 
-        <input name="color" type="text" placeholder="Brand Color" required/> 
-        <input name="max_speed" type="text" placeholder="Brand Maxspeed" required/> 
-        <input name="category" type="text" placeholder="Brand Category" required/> 
-        <button type="submit">Add Vehicle</button>
-    </form>
+    <button class="styled-btn" id="create-button">Create Vehicle</button>
 
-    <button class="delete-button">delete</button>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Brand Name</th>
-                <th>Brand Year</th>
-                <th>Brand Color</th>
-                <th>Brand Maxspeed </th>
-                <th>Brand Category </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody class="table-body">
+    <div class="modal-container" id="create-modal">
+        <div class="close-btn" id="create-modal-close">
+            <i class="material-icons">
+                close
+            </i>
+        </div>
+        <div class="modal">
+            <form id="createVehicle"> 
+                <input class="styled-input" name="brandname" type="text" placeholder="Brand Name" required/> 
+                <input class="styled-input" name="year" type="text" placeholder="Brand Year" required/> 
+                <input class="styled-input" name="color" type="text" placeholder="Brand Color" required/> 
+                <input class="styled-input" name="max_speed" type="text" placeholder="Brand Maxspeed" required/> 
+                <input class="styled-input" name="category" type="text" placeholder="Brand Category" required/> 
+                <button class="styled-btn add-btn" type="submit">Add Vehicle</button>
+            </form>
+        </div>
+    </div>
 
-        </tbody>
-        </tbody>
-    </table>
+
+
+    <div class="modal-container" id="update-modal">
+        <div class="close-btn" id="update-modal-close">
+            <i class="material-icons">
+                close
+            </i>
+        </div>
+        <div class="modal">
+            <form id="updateVehicle"> 
+                <input class="styled-input" name="brandname" type="text" placeholder="Brand Name" required/> 
+                <input class="styled-input" name="year" type="text" placeholder="Brand Year" required/> 
+                <input class="styled-input" name="color" type="text" placeholder="Brand Color" required/> 
+                <input class="styled-input" name="max_speed" type="text" placeholder="Brand Maxspeed" required/> 
+                <input class="styled-input" name="category" type="text" placeholder="Brand Category" required/> 
+                <button class="styled-btn add-btn" type="submit">Update Vehicle</button>
+            </form>
+        </div>
+    </div>
+   
+
+
+    <button class="styled-btn delete-button">delete</button>
+
+    <div class="edit-form">
+        <form id='editForm' data-edit="">
+            <input class="styled-input" name="brandname" type="text" placeholder="Brand Name" required/> 
+            <input class="styled-input" name="year" type="text" placeholder="Brand Year" required/> 
+            <input class="styled-input" name="color" type="text" placeholder="Brand Color" required/> 
+            <input class="styled-input" name="max_speed" type="text" placeholder="Brand Maxspeed" required/> 
+            <input class="styled-input" name="category" type="text" placeholder="Brand Category" required/> 
+            <button class="styled-btn add-btn" type="submit">Update</button>
+        </form>
+    </div>
+
+    <div id="records-table">
+        <div class="table-head">
+            <div class="table-row">
+                <div class="table-data"></div>
+                <div class="table-data">Brand Name</div>
+                <div class="table-data">Brand Year</div>
+                <div class="table-data">Brand Color</div>
+                <div class="table-data">Brand Maxspeed </div>
+                <div class="table-data">Brand Category </div>
+                <div class="table-data"></div>
+            </div>
+        </div>
+        <div class="table-body">
+
+        </div>
+    </div>
 
 
     <!-- GET ITEMS ONCE DOCUMENT HAS LOADED  -->
@@ -52,21 +98,44 @@
             let html = "";
             items.forEach(item => {
                 html += `
-                            <tr>
-                                <td><input type='checkbox' data-delete='${item._id}' class='record-selector'></td>
-                                <td>${item.brandname}</td>
-                                <td>${item.year}</td>
-                                <td>${item.color}</td>
-                                <td>${item.max_speed}</td>
-                                <td>${item.category}</td>
-                                <td><button data-edit='${item._id}' class='edit-button'>edit</button></td>
-                            </tr>
+                            <div class="table-row" data-id='${item._id}'>
+                                <div class='table-data'><input type='checkbox' data-delete='${item._id}' class='record-selector'></div>
+                                <div class='table-data'>${item.brandname}</div>
+                                <div class='table-data'>${item.year}</div>
+                                <div class='table-data'>${item.color}</div>
+                                <div class='table-data'>${item.max_speed}</div>
+                                <div class='table-data'>${item.category}</div>
+                                <div class='table-data'><button data-edit='${item._id}' class='styled-btn edit-button'>edit</button></div>
+                            </div>
                         `;
             });
             let tbody = document.querySelector('.table-body');
             tbody.innerHTML = html;
+            addEditHandlers();
         })
     </script>
+    <script>
+        let create_button = document.getElementById('create-button');
+        let create_modal_close = document.getElementById('create-modal-close');
+        create_button.addEventListener("click",(e) =>{
+            let create_modal = document.getElementById('create-modal');
+            create_modal.style.display = "flex";
+        });
+
+        create_modal_close.addEventListener("click",(e) => {
+            let create_modal = document.getElementById('create-modal');
+            create_modal.style.display = "none";
+        })
+
+
+        let update_modal_close = document.getElementById("update-modal-close");
+        update_modal_close.addEventListener("click",(e) => {
+            let update_modal = document.getElementById('update-modal');
+            update_modal.style.display = "none";
+        })
+
+    </script>
+
     <!-- CREATE VEHICLES -->
     <script>
         let createForm = document.getElementById("createVehicle");
@@ -140,7 +209,68 @@
     </script>
      <!-- UPDATE VEHICLES -->
      <script>
-       
+        function addEditHandlers(){
+            let editbuttons = document.querySelectorAll(".edit-button");
+            editbuttons.forEach(editButton => {
+                editButton.addEventListener("click",async (e) => {
+                    e.preventDefault();
+
+                    let update_modal = document.getElementById('update-modal');
+                    update_modal.style.display = "flex";
+
+                    let row_id = editButton.getAttribute('data-edit');
+                    let row = document.querySelector(`[data-id='${row_id}']`);
+                    let data = {
+                        id: row_id,
+                        brandname:row.children[1].innerHTML,
+                        year: row.children[2].innerHTML,
+                        color: row.children[3].innerHTML,
+                        max_speed:row.children[4].innerHTML,
+                        category:row.children[5].innerHTML,
+                    };
+
+                    let update_form = document.getElementById('updateVehicle');
+                    update_form.setAttribute('data-edit',row_id);
+
+                    update_form.elements["brandname"].value = data.brandname;
+                    update_form.elements["category"].value = data.category;
+                    update_form.elements["color"].value = data.color;
+                    update_form.elements["year"].value = data.year;
+                    update_form.elements["max_speed"].value = data.max_speed;
+                    console.log(data);
+                    //let result = await fetch('http://localhost:9000/updateItem',)
+                })
+            }); 
+        }
+    </script>
+    <script>
+        let update_form = document.getElementById("updateVehicle");
+        update_form.addEventListener("submit",async (e) => {
+            e.preventDefault();
+            let formData = new FormData(e.target);
+            let id = e.target.getAttribute("data-edit");
+            let data = {
+                id: id,
+                brandname:formData.get('brandname'),
+                category:formData.get('category'),
+                color: formData.get('color'),
+                year:formData.get('year'),
+                max_speed:formData.get('max_speed'),
+            }
+            console.log("Edit data is: ",data);
+
+            let result = await fetch("http://localhost:9000/updateItem",{
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type":"application/json",
+                }
+            });
+
+            let json_response = await result.json();
+            console.log(json_response);
+            location.reload();
+        })
     </script>
 </body>
 </html>
